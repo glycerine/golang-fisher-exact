@@ -59,5 +59,11 @@ func TestChiSquare(t *testing.T) {
 		fmt.Printf("\n\n Chi-squared stat = %v,  pval = %v\n", stat, pval)
 		cv.So(EpsEquals(stat, 1.0971428571428572, eps), cv.ShouldBeTrue)
 		cv.So(EpsEquals(pval, 0.29489398380476184, eps), cv.ShouldBeTrue)
+
+		yates = false
+		stat, pval = ChiSquareTest(n11, n12, n21, n22, yates)
+		fmt.Printf("\n\n Chi-squared stat = %v,  pval = %v\n", stat, pval)
+		cv.So(EpsEquals(stat, 1.7142857142857142, eps), cv.ShouldBeTrue)
+		cv.So(EpsEquals(pval, 0.19043026381022465, eps), cv.ShouldBeTrue)
 	})
 }
