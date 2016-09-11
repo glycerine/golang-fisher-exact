@@ -8,6 +8,8 @@ package fet
 import (
 	"fmt"
 	"math"
+
+	"github.com/glycerine/gostat"
 )
 
 // ported to Go from the C/C++:
@@ -370,4 +372,33 @@ func intAbs(i int) int {
 		return -i
 	}
 	return i
+}
+
+// ChiSquareStat computes the chi-squared test statistic,
+// for a 2x2 contingency table; with optional yates correction.
+// See ChiSquareTest for a p-value.
+func ChiSquareStat(n11 int, n12 int, n21 int, n22 int, yates bool) float64 {
+	tot := float64(n11 + n12 + n21 + n22)
+	a := float64(n11)
+	b := float64(n12)
+	c := float64(n21)
+	d := float64(n22)
+	top1 := (a*d - b*c)
+	if yates {
+		if top1 < 0 {
+			top1 = -top1
+		}
+		top1 -= (tot / 2.0)
+	}
+	denom := (a + b) * (c + d) * (b + d) * (a + c)
+	stat := top1 * top1 * tot / denom
+	return stat
+}
+
+// ChiSquareTest computes the chi-squared test statistic,
+// for a 2x2 contingency table; with optional yates correction,
+// and then returns the p-value for that test.
+func ChiSquareTest(n11 int, n12 int, n21 int, n22 int, yates bool) (stat, pval float64) {
+	stat = ChiSquareStat(n11, n12, n21, n22, yates)
+	return stat, 1.0 - gostat.Xsquare_CDF(1)(stat)
 }
