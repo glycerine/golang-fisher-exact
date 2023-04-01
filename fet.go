@@ -214,12 +214,12 @@ func main() {
 	var x float64 = 5.5
 	var y float64 = 3
 	var a, b float64
-	fmt.Printf("erfc(%lg): %lg, %lg\n", x, math.Erfc(x), kf_erfc(x))
-	fmt.Printf("upper-gamma(%lg,%lg): %lg\n", x, y, kf_gammaq(y, x)*math.Gamma(y)) // is tgamma == math.Gamma ?
+	fmt.Printf("erfc(%v): %v, %v\n", x, math.Erfc(x), kf_erfc(x))
+	fmt.Printf("upper-gamma(%v,%v): %v\n", x, y, kf_gammaq(y, x)*math.Gamma(y)) // is tgamma == math.Gamma ?
 	a = 2
 	b = 2
 	x = 0.5
-	fmt.Printf("incomplete-beta(%lg,%lg,%lg): %lg\n", a, b, x, kf_betai(a, b, x)/math.Exp(kf_lgamma(a+b)-kf_lgamma(a)-kf_lgamma(b)))
+	fmt.Printf("incomplete-beta(%v,%v,%v): %v\n", a, b, x, kf_betai(a, b, x)/math.Exp(kf_lgamma(a+b)-kf_lgamma(a)-kf_lgamma(b)))
 
 }
 
@@ -235,7 +235,8 @@ func lbinom(n int, k int) float64 {
 // value of the gamma function of x.
 // ex: lgamma (0.500000) = 0.572365
 func lgamma(x float64) float64 {
-	return math.Log(math.Abs(math.Gamma(x)))
+	xG, _ := math.Lgamma(x)
+	return xG
 }
 
 // n11  n12  | n1_
@@ -285,20 +286,20 @@ func hypergeo_acc(n11 int, n1_ int, n_1 int, n int, aux *hgacc_t) float64 {
 }
 
 // FisherExactTest computes Fisher's Exact Test for
-//  contigency tables. Nomenclature:
 //
-//    n11  n12  | n1_
-//    n21  n22  | n2_
-//   -----------+----
-//    n_1  n_2  | n
+//	contigency tables. Nomenclature:
+//
+//	  n11  n12  | n1_
+//	  n21  n22  | n2_
+//	 -----------+----
+//	  n_1  n_2  | n
 //
 // Returned values:
 //
-//  probOfCurrentTable = probability of the current table
-//  leftp = the left sided alternative's p-value  (h0: odds-ratio is less than 1)
-//  rightp = the right sided alternative's p-value (h0: odds-ratio is greater than 1)
-//  twop = the two-sided p-value for the h0: odds-ratio is different from 1
-//
+//	probOfCurrentTable = probability of the current table
+//	leftp = the left sided alternative's p-value  (h0: odds-ratio is less than 1)
+//	rightp = the right sided alternative's p-value (h0: odds-ratio is greater than 1)
+//	twop = the two-sided p-value for the h0: odds-ratio is different from 1
 func FisherExactTest(n11 int, n12 int, n21 int, n22 int) (probOfCurrentTable, leftp, rightp, twop float64) {
 	var i, j, max, min int
 	var p float64
